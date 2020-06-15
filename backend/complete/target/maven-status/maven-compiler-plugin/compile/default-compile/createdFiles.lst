@@ -1,0 +1,17 @@
+com\example\springboot\keyPhrasesExtraction\ExtractKeyPhrases.class
+com\example\springboot\linkedEntitiesRecognition\RecognizeLinkedEntities.class
+com\example\springboot\languageDetection\DetectLanguage.class
+com\example\springboot\linkedEntitiesRecognition\RecognizeLinkedEntitiesBatchString.class
+com\example\springboot\SentimentAnalyzation\AnalyzeSentiment.class
+com\example\springboot\entitiesRecognition\RecognizeEntities.class
+com\example\springboot\AppController.class
+com\example\springboot\Application.class
+com\example\springboot\entitiesRecognition\RecognizeEntitiesBatchString.class
+com\example\springboot\keyPhrasesExtraction\ExtractKeyPhrasesBatchString.class
+com\example\springboot\linkedEntitiesRecognition\RecognizeLinkedEntitiesBatch.class
+com\example\springboot\languageDetection\DetectLanguageBatch.class
+com\example\springboot\languageDetection\DetectLanguageBatchString.class
+com\example\springboot\SentimentAnalyzation\AnalyzeSentimentBatchString.class
+com\example\springboot\entitiesRecognition\RecognizeEntitiesBatch.class
+com\example\springboot\keyPhrasesExtraction\ExtractKeyPhrasesBatch.class
+com\example\springboot\SentimentAnalyzation\AnalyzeSentimentBatch.class
