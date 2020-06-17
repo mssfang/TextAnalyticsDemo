@@ -9,8 +9,10 @@ export default class LanguageDetection extends React.Component {
   constructor(props) {
     super(props);
     localStorage.removeItem("id1");
-    this.state = {result: localStorage.getItem("id1"), items: []};
+    this.state = {result: localStorage.getItem("id1"), items: [], countryHint: "US", isIncludeStats: false, modelVersion: "latest"};
     this.input = React.createRef();
+    this.countryHintInput = React.createRef();
+    this.isIncludeStatsInput = React.createRef();
   }
   
   // set state dynamically
@@ -23,8 +25,16 @@ export default class LanguageDetection extends React.Component {
     var url = "http://localhost:8080/detectLanguageBatchString?";
   
     this.state.items.forEach(item => {
-        url += "documents=\"" + item.text + "\"" + "&"
-    })
+      if (item.text == "") {
+        url += "documents=" + item.text + "&";
+
+      } else {
+        url += "documents=\"" + item.text + "\"&";
+      }  
+    });
+
+    url += "countryHint=" + this.state.countryHint + "&";
+    url += "isIncludeStats=" + this.state.isIncludeStats;
     return url;
   }
 
@@ -54,19 +64,19 @@ export default class LanguageDetection extends React.Component {
   // add input documnt handler
   addItem = (event) => {
     event.preventDefault();
-    if (this.input.current.value !== "") {
-      var newItem = {
-        text: this.input.current.value,
-        key: Date.now()
+    var newItem = {
+      text: this.input.current.value,
+      key: Date.now()
+    };
+    this.setState((prevState) => {
+      return {
+        items: prevState.items.concat(newItem),
+        countryHint: this.countryHintInput.current.value,
+        isIncludeStats: this.isIncludeStatsInput.current.value
       };
-      this.setState((prevState) => {
-        return {
-          items: prevState.items.concat(newItem)
-        };
-      });
-      this.input.current.value = "";
-      this.forceUpdate();
-    }
+    });
+    this.input.current.value = "";
+    this.forceUpdate();
   }
 
   render() {
@@ -75,6 +85,8 @@ export default class LanguageDetection extends React.Component {
         <H1>Language Detection</H1>
         <form onSubmit={this.addItem}> 
           <input ref={this.input} placeholder="Add document input"></input>
+          <input ref={this.countryHintInput} placeholder="Country Hint, ex: US"></input>
+          <input ref={this.isIncludeStatsInput} placeholder="Batch stats: true or false"></input>
           <button type="submit">Add</button>
         </form>
         <TodoItems entries={this.state.items}/>

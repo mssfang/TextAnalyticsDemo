@@ -8,8 +8,10 @@ export default class SentimentAnalysis extends React.Component {
   constructor(props) {
     super(props);
     localStorage.removeItem("id1");
-    this.state = {result: localStorage.getItem("id1"), items: []};
+    this.state = {result: localStorage.getItem("id1"), items: [], languageCode: "en",  isIncludeStats: false, modelVersion: "latest"}; 
     this.input = React.createRef();
+    this.languageCodeInput = React.createRef();
+    this.isIncludeStatsInput = React.createRef();
   }
   
   // set state dynamically
@@ -21,8 +23,16 @@ export default class SentimentAnalysis extends React.Component {
   urlBuilder = () => {
     var url = "http://localhost:8080/analyzeSentimentBatchString?";
     this.state.items.forEach(item => {
+      if (item.text == "") {
+        url += "documents=" + item.text + "&"
+
+      } else {
         url += "documents=\"" + item.text + "\"" + "&"
+      }  
     })
+
+    url += "languageCode=" + this.state.languageCode + "&";
+    url += "isIncludeStats=" + this.state.isIncludeStats;
     return url;
   }
 
@@ -36,7 +46,7 @@ export default class SentimentAnalysis extends React.Component {
         axios.get(this.urlBuilder(), {
           headers: {"Access-Control-Allow-Origin": "*"}
         }).then(function(response){
-          console.log("Key Phrases extraction response:" + response.data);
+          console.log("Sentiment Analysis response:" + response.data);
           localStorage.setItem("id1", response.data);
         }).catch(function(error){
             console.log("Error: " + error)
@@ -54,27 +64,29 @@ export default class SentimentAnalysis extends React.Component {
   // add input documnt handler
   addItem = (event) => {
     event.preventDefault();
-    if (this.input.current.value !== "") {
-      var newItem = {
-        text: this.input.current.value,
-        key: Date.now()
+    var newItem = {
+      text: this.input.current.value,
+      key: Date.now()
+    };
+    this.setState((prevState) => {
+      return {
+        items: prevState.items.concat(newItem),
+        languageCode: this.languageCodeInput.current.value,
+        isIncludeStats: this.isIncludeStatsInput.current.value
       };
-      this.setState((prevState) => {
-        return {
-          items: prevState.items.concat(newItem)
-        };
-      });
-      this.input.current.value = "";
-      this.forceUpdate();
-    }
+    });
+    this.input.current.value = "";
+    this.forceUpdate();
   }
 
   render() {
     return (
       <div>
-        <H1>Sentimen tAnalysis</H1>
+        <H1>Sentiment Analysis</H1>
         <form onSubmit={this.addItem}> 
           <input ref={this.input} placeholder="Add document input"></input>
+          <input ref={this.languageCodeInput} placeholder="Language Code, ex: en"></input>
+          <input ref={this.isIncludeStatsInput} placeholder="Batch stats: true or false"></input>
           <button type="submit">Add</button>
         </form>
         <TodoItems entries={this.state.items}/>

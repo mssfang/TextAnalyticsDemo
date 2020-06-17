@@ -6,12 +6,11 @@ import com.azure.ai.textanalytics.models.TextAnalyticsRequestOptions;
 import com.azure.ai.textanalytics.models.TextDocumentBatchStatistics;
 import com.azure.ai.textanalytics.util.DetectLanguageResultCollection;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DetectLanguageBatchString {
-    public static String getSource(TextAnalyticsClient client, List<String> documents) {
+    public static String getSource(TextAnalyticsClient client, List<String> documents, String isIncludeStats, String modelVersion, String countryHint) {
         StringBuilder sb = new StringBuilder();
 //        // The texts that need be analyzed.
 //        List<String> documents = Arrays.asList(
@@ -21,20 +20,29 @@ public class DetectLanguageBatchString {
 //            "これは英語で書かれています。"
 //        );
 
+        System.out.println("isIncludeStats=" + isIncludeStats);
+        System.out.println("modelVersion= " + modelVersion);
+        System.out.println("countryHint= " + countryHint);
+
+        boolean isIncludeStatsBoolean = "true".equals(isIncludeStats) ? true : false;
+
         // Request options: show statistics and model version
-        TextAnalyticsRequestOptions requestOptions = new TextAnalyticsRequestOptions().setIncludeStatistics(true).setModelVersion("latest");
+        TextAnalyticsRequestOptions requestOptions = new TextAnalyticsRequestOptions()
+                .setIncludeStatistics(isIncludeStatsBoolean)
+                .setModelVersion(modelVersion);
 
         // Detecting language for each document in a batch of documents
-        AtomicInteger counter = new AtomicInteger();
-        DetectLanguageResultCollection detectedLanguageResultCollection = client.detectLanguageBatch(documents, "US", requestOptions);
+        DetectLanguageResultCollection detectedLanguageResultCollection = client.detectLanguageBatch(documents, countryHint, requestOptions);
         // Model version
         sb.append(String.format("<br>Results of Azure Text Analytics \"Language Detection\" Model, version: %s<br>", detectedLanguageResultCollection.getModelVersion()));
 
-        // Batch statistics
         TextDocumentBatchStatistics batchStatistics = detectedLanguageResultCollection.getStatistics();
-        sb.append(String.format("<br>Documents statistics: document count = %s, erroneous document count = %s, transaction count = %s, valid document count = %s.<br>",
-                batchStatistics.getDocumentCount(), batchStatistics.getInvalidDocumentCount(), batchStatistics.getTransactionCount(), batchStatistics.getValidDocumentCount()));
+        if (batchStatistics != null) {
+            sb.append(String.format("<br>Documents statistics: document count = %s, erroneous document count = %s, transaction count = %s, valid document count = %s.<br>",
+                    batchStatistics.getDocumentCount(), batchStatistics.getInvalidDocumentCount(), batchStatistics.getTransactionCount(), batchStatistics.getValidDocumentCount()));
+        }
 
+        AtomicInteger counter = new AtomicInteger();
         detectedLanguageResultCollection.forEach(detectLanguageResult -> {
             // Detected language for each document
             sb.append(String.format("<br>Text = %s<br>", documents.get(counter.getAndIncrement())));
@@ -48,6 +56,8 @@ public class DetectLanguageBatchString {
                         language.getName(), language.getIso6391Name(), language.getConfidenceScore()));
             }
         });
+
+
         return sb.toString();
     }
 }

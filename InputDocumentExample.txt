@@ -1,0 +1,31 @@
+<Named Entity Recognition>
+I had a wonderful trip to Seattle last week  // contians subcategory
+Satya Nadella is the CEO of Microsoft
+Elon Musk is the CEO of SpaceX and Tesla
+
+
+
+<Linked Entities recognition>
+Our tour guide took us up the Space Needle during our trip to Seattle last week
+Old Faithful is a geyser at Yellowstone Park
+
+
+
+<Sentiment Analysis>
+Our tour guide took us up the Space Needle during our trip to Seattle last week
+Old Faithful is a geyser at Yellowstone Park
+
+
+
+<Key Phrase Extraction>
+The food was delicious and there were wonderful staff
+Satya Nadella is the CEO of Microsoft
+
+Satya Nadella es el CEO de Microsoft
+
+
+<Language Detection>
+This is written in English
+Este es un documento  escrito en Español
+这是用英语写的
+これは英語で書かれています
